@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon-192x192.png">
 
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/manifest.webmanifest">
 
 </head>
 

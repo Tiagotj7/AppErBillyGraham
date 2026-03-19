@@ -11,3 +11,5 @@ Options -Indexes
   Order allow,deny
   Deny from all
 </Files>
+
+AddType application/json .json
