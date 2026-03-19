@@ -4,12 +4,24 @@ declare(strict_types=1);
 function env_load(string $path): void {
   if (!is_readable($path)) return;
 
-  $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+  $raw = file_get_contents($path);
+  if ($raw === false) return;
+
+  // Remove BOM UTF-8 se existir
+  $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw);
+
+  $lines = preg_split("/\r\n|\n|\r/", $raw);
   if (!$lines) return;
 
   foreach ($lines as $line) {
     $line = trim($line);
+
     if ($line === '' || str_starts_with($line, '#')) continue;
+
+    // aceita "export KEY=VALUE"
+    if (str_starts_with($line, 'export ')) {
+      $line = trim(substr($line, 7));
+    }
 
     $pos = strpos($line, '=');
     if ($pos === false) continue;
@@ -23,16 +35,16 @@ function env_load(string $path): void {
       $val = substr($val, 1, -1);
     }
 
-    // não sobrescrever se já existir
-    if (getenv($key) === false) {
-      putenv($key . '=' . $val);
-      $_ENV[$key] = $val;
-    }
+    if ($key === '') continue;
+
+    // Seta no ambiente
+    putenv($key . '=' . $val);
+    $_ENV[$key] = $val;
   }
 }
 
 function env(string $key, ?string $default = null): ?string {
   $v = getenv($key);
-  if ($v === false) return $default;
+  if ($v === false || $v === '') return $default;
   return $v;
 }
