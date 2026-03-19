@@ -414,6 +414,130 @@ tr:hover {
 }
 
 /* =========================================================
+   ANIMAÇÕES LEVES / FLUIDEZ (sem exagero)
+   Cole no FINAL do style.css
+   ========================================================= */
+
+/* Respeita usuários que preferem menos animação */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root {
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* Suaviza scroll em navegadores compatíveis */
+html { scroll-behavior: smooth; }
+
+/* Cartões e áreas principais com entrada suave */
+.tab-content {
+  animation: fadeUp .28s var(--ease-out) both;
+  will-change: transform, opacity;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header com leve “pop” ao carregar */
+.header {
+  animation: headerIn .22s var(--ease-out) both;
+}
+@keyframes headerIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Botões: hover e clique mais suaves */
+.btn, .action-btn {
+  transition: transform .12s var(--ease-out), box-shadow .18s var(--ease-out), filter .18s var(--ease-out);
+}
+.btn:hover, .action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.10);
+}
+.btn:active, .action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,.10);
+}
+
+/* Tabs: transição discreta */
+.tab {
+  transition: background-color .15s var(--ease-out), color .15s var(--ease-out),
+              border-color .15s var(--ease-out), transform .12s var(--ease-out);
+}
+.tab:hover {
+  transform: translateY(-1px);
+}
+
+/* Inputs: foco mais “premium” */
+.form-group input,
+.form-group select {
+  transition: border-color .18s var(--ease-out), box-shadow .18s var(--ease-out);
+}
+.form-group input:focus,
+.form-group select:focus {
+  box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.25);
+}
+
+/* Tabela: hover mais suave */
+tr {
+  transition: background-color .12s var(--ease-out);
+}
+
+/* Loading overlay discreto (se você quiser usar) */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s var(--ease-out);
+}
+
+.loading-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.loading-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.18);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  color: var(--dark);
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid #e9eef5;
+  border-top-color: var(--primary);
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
    LOGO (login + header) responsiva e limpa
    Cole no final do style.css
    ========================================================= */
