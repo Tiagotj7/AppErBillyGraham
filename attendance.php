@@ -7,20 +7,25 @@ $activeTab = "attendance";
 
 $user = current_user();
 
-/**
- * 1) Determina a data alvo:
- * - Se veio POST: usa a data do POST (prioridade)
- * - Senão: usa GET[date]
- * - Senão: hoje
- */
 function valid_date_ymd(string $date): bool {
   if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) return false;
   [$y,$m,$d] = array_map('intval', explode('-', $date));
   return checkdate($m, $d, $y);
 }
 
+function br_date(string $ymd): string {
+  // recebe YYYY-MM-DD e devolve DD/MM/YYYY
+  if (!valid_date_ymd($ymd)) return $ymd;
+  return date('d/m/Y', strtotime($ymd));
+}
+
+/**
+ * Data alvo SEMPRE em Y-m-d
+ */
 $date = date('Y-m-d');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  csrf_verify();
   $posted = (string)($_POST['date'] ?? '');
   if (valid_date_ymd($posted)) $date = $posted;
 } else {
@@ -28,20 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (valid_date_ymd($get)) $date = $get;
 }
 
-/* Carrega pessoas sempre */
+/* Carrega pessoas */
 $people = $pdo->query("SELECT * FROM people ORDER BY name")->fetchAll();
 
-/* 2) SALVAR (POST) */
+/* SALVAR (POST) */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  csrf_verify();
-
-  // statuses: [person_id => present/absent]
   $statuses = $_POST['status'] ?? [];
   if (!is_array($statuses)) $statuses = [];
 
   $pdo->beginTransaction();
   try {
-    // apaga registros do dia selecionado (não do dia atual!)
     $stmtDel = $pdo->prepare("DELETE FROM attendance WHERE attendance_date=?");
     $stmtDel->execute([$date]);
 
@@ -54,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $pid = (int)$p['id'];
       $st = ($statuses[$pid] ?? 'absent');
       $st = ($st === 'present') ? 'present' : 'absent';
-
       $stmtIns->execute([$date, $pid, $st, (int)$user['id']]);
     }
 
@@ -62,15 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } catch (Throwable $e) {
     $pdo->rollBack();
     http_response_code(500);
-    exit("Erro ao salvar frequência. Tente novamente.");
+    exit("Erro ao salvar frequência.");
   }
 
-  // redireciona para a mesma data salva
   header("Location: /attendance.php?date=" . urlencode($date) . "&saved=1");
   exit;
 }
 
-/* 3) Carrega status da data selecionada */
+/* Carrega status do dia */
 $stmt = $pdo->prepare("SELECT person_id, status FROM attendance WHERE attendance_date=?");
 $stmt->execute([$date]);
 $map = [];
@@ -85,13 +84,16 @@ require_once __DIR__ . "/app/header.php";
   <h3 class="form-title">Registro de Frequência</h3>
 
   <?php if (!empty($_GET['saved'])): ?>
-    <div class="success-message">Frequência salva para <?= htmlspecialchars(date('d/m/Y', strtotime($date))) ?>.</div>
+    <div class="success-message">
+      Frequência salva para <?= htmlspecialchars(br_date($date)) ?>.
+    </div>
   <?php endif; ?>
 
-  <!-- Seleção de data (GET) -->
+  <!-- GET: escolher data -->
   <form method="get" class="form-row">
     <div class="form-group">
       <label>Data</label>
+      <!-- value SEMPRE YYYY-MM-DD -->
       <input type="date" name="date" value="<?= htmlspecialchars($date) ?>">
     </div>
     <div class="form-group" style="align-self:end;">
@@ -99,10 +101,10 @@ require_once __DIR__ . "/app/header.php";
     </div>
   </form>
 
-  <!-- Salvar frequência (POST) -->
+  <!-- POST: salvar -->
   <form method="post">
     <?= csrf_input() ?>
-    <!-- IMPORTANTE: hidden com a data atual da tela -->
+    <!-- hidden também em YYYY-MM-DD -->
     <input type="hidden" name="date" value="<?= htmlspecialchars($date) ?>">
 
     <div class="attendance-list">
