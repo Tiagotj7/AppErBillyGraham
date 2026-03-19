@@ -4,12 +4,28 @@ declare(strict_types=1);
 require_once __DIR__ . "/env.php";
 require_once __DIR__ . "/security.php";
 
-// Caminho absoluto do diretório público (onde está o index.php)
-$publicRoot = realpath(__DIR__ . "/.."); // /public_html (se app está dentro dele)
-$envFile = $publicRoot ? ($publicRoot . "/.env") : null;
+/**
+ * Raiz do projeto = pasta que contém index.php e .env
+ * Como config.php está em /app, a raiz é sempre o diretório pai.
+ */
+$projectRoot = realpath(__DIR__ . "/.."); // ex: /AppErBillyGraham
+$envPaths = [];
 
-if ($envFile && is_file($envFile) && is_readable($envFile)) {
-  env_load($envFile);
+// tenta carregar .env da raiz do projeto
+if ($projectRoot) {
+  $envPaths[] = $projectRoot . "/.env";
+}
+
+// fallback: .env no mesmo dir do config (não recomendado)
+$envPaths[] = __DIR__ . "/.env";
+
+$loadedFile = null;
+foreach ($envPaths as $p) {
+  if (is_file($p) && is_readable($p)) {
+    env_load($p);
+    $loadedFile = $p;
+    break;
+  }
 }
 
 security_headers();
@@ -20,11 +36,12 @@ $DB_NAME = env("DB_NAME");
 $DB_USER = env("DB_USER");
 $DB_PASS = env("DB_PASS");
 
-if (!$DB_HOST || !$DB_NAME || !$DB_USER) {
+if (!$loadedFile || !$DB_HOST || !$DB_NAME || !$DB_USER) {
   http_response_code(500);
   exit(
     "Configuração do banco não encontrada (.env). " .
-    "Confirme que existe /public_html/.env e que DB_HOST/DB_NAME/DB_USER estão preenchidos."
+    "Procurei em: " . implode(" | ", $envPaths) . ". " .
+    "Confira se o arquivo existe e contém DB_HOST/DB_NAME/DB_USER."
   );
 }
 
@@ -41,5 +58,5 @@ try {
   );
 } catch (Throwable $e) {
   http_response_code(500);
-  exit("Erro ao conectar no banco. Confira DB_HOST/DB_NAME/DB_USER/DB_PASS no .env");
+  exit("Erro ao conectar no banco. Verifique DB_HOST/DB_NAME/DB_USER/DB_PASS no .env");
 }
