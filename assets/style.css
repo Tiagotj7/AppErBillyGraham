@@ -408,188 +408,128 @@ tr:hover {
 }
 
 /* =========================================================
-   RESPONSIVIDADE AJUSTADA PARA 400x600+
-   Cole este bloco no FINAL do style.css
+   RESPONSIVIDADE (limpa e consistente)
+   Alvo: telas a partir de 400x600 e também menores
    ========================================================= */
 
-/* Base: até 399px (bem pequeno) — deixa tudo em coluna e compacto */
-@media (max-width: 399px) {
-  .container {
-    padding: 12px;
-  }
+html, body { overflow-x: hidden; }
+input, select, button, textarea { max-width: 100%; }
 
-  .login-form {
-    padding: 18px;
-    max-width: 100%;
-    border-radius: 10px;
-  }
+/* MOBILE FIRST (até 520px) */
+@media (max-width: 520px) {
+  .container { padding: 14px; }
+  .main-content { margin-top: 16px; }
 
+  .tab-content { padding: 16px; }
+  .form-title { font-size: 1.05rem; line-height: 1.2; }
+
+  /* Header */
+  .header-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+  .user-info { flex-direction: column; gap: 8px; }
+  .username { margin-right: 0; }
+
+  /* Tabs como "cards" */
   .tabs {
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     border-bottom: none;
+    margin-bottom: 16px;
   }
-
   .tab {
     display: block;
     width: 100%;
-    border-bottom: 1px solid #ddd;
-    border-left: 3px solid transparent;
+    padding: 12px 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+    font-weight: 800;
+    line-height: 1.2;
   }
-
   .tab.active {
-    border-left: 3px solid var(--accent);
-    border-bottom: 1px solid #ddd;
+    border: 2px solid var(--accent);
+    color: var(--primary);
   }
 
-  .form-row {
-    flex-direction: column;
-    gap: 12px;
-  }
+  /* Form em coluna */
+  .form-row { flex-direction: column; gap: 12px; }
 
-  .search-bar {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .search-bar button,
-  .search-bar .btn {
+  /* Inputs: 16px evita zoom no iOS */
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"],
+  .form-group input[type="date"],
+  .form-group select {
     width: 100%;
+    font-size: 16px;
+    padding: 10px 12px;
   }
 
-  /* Tabela: permite rolagem horizontal sem estourar layout */
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+  /* Search: empilha */
+  .search-bar { flex-direction: column; gap: 10px; }
+  .search-bar input[type="text"], .search-bar button { width: 100%; }
 
-  th, td {
-    padding: 10px 10px;
-    white-space: nowrap;
-  }
+  /* Tabelas: scroll horizontal e legível */
+  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 520px; }
+  th, td { white-space: nowrap; padding: 10px 10px; }
 
-  /* Ações: empilha botões */
-  td .action-btn,
-  td form {
-    display: block;
-    margin-bottom: 8px;
-  }
+  /* Botões de ação: empilha e ocupa largura toda */
+  td { vertical-align: top; }
+  td .action-btn, td a.action-btn, td form { display: block; width: 100%; }
+  .action-btn { margin: 0 0 8px 0; text-align: center; }
 
-  .action-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-
-  .user-info {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .username {
-    margin-right: 0;
-  }
-
+  /* Attendance */
   .attendance-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-}
+  .attendance-status {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+  .attendance-status label {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    background: #fafafa;
+  }
 
-/* A partir de 400x600: melhora espaçamentos e volta abas em linha */
-@media (min-width: 400px) and (min-height: 600px) {
-  .container {
+  /* Login */
+  .login-container {
+    padding: 14px;
+    height: auto;
+    min-height: 100vh;
+  }
+  .login-form {
+    width: 100%;
+    max-width: 100%;
     padding: 18px;
   }
 
-  .login-form {
-    padding: 26px;
-    max-width: 420px;
-  }
-
-  /* Tabs em linha (quando couber) */
-  .tabs {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 2px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .tab {
-    border-left: none;
-    border-bottom: 3px solid transparent;
-  }
-
-  .tab.active {
-    border-left: none;
-    border-bottom: 3px solid var(--accent);
-  }
-
-  .form-row {
-    flex-direction: column; /* ainda em coluna em telas menores, mas 400+ fica confortável */
-    gap: 14px;
-  }
-
-  /* Ações no people.php: botões lado a lado quando tiver espaço */
-  td {
-    vertical-align: middle;
-  }
-
-  td .action-btn {
-    display: inline-block;
-    width: auto;
-    margin-bottom: 6px;
-  }
-
-  td form {
-    display: inline;
-  }
-
-  /* Search em linha */
-  .search-bar {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .search-bar input[type="text"] {
-    min-width: 160px;
-  }
-
-  /* Header fica mais estável */
-  .header-content {
-    flex-direction: row;
-    text-align: left;
-  }
-
-  .user-info {
-    flex-direction: row;
-  }
-
-  .username {
-    margin-right: 16px;
-  }
-
-  /* Attendance itens: mantém alinhado */
-  .attendance-item {
-    flex-direction: row;
-    align-items: center;
-  }
+  /* Botões um pouco menores no mobile */
+  .btn { padding: 10px 14px; }
 }
 
-/* A partir de 600px de largura: volta form-row em duas colunas como no desktop */
-@media (min-width: 600px) {
-  .form-row {
-    flex-direction: row;
-    gap: 20px;
-  }
+/* 400x600+ (seu pedido): só melhora espaçamento/legibilidade */
+@media (min-width: 400px) and (min-height: 600px) and (max-width: 520px) {
+  .container { padding: 16px; }
+  .tab { padding: 14px 14px; font-size: 0.98rem; }
+  .tab-content { padding: 18px; }
+}
 
-  .search-bar input[type="text"] {
-    min-width: 260px;
-  }
+/* TABLET / SMALL DESKTOP (>=600px): volta layout em 2 colunas nos forms */
+@media (min-width: 600px) {
+  .form-row { flex-direction: row; gap: 20px; }
+  table { min-width: 0; } /* remove scroll forçado */
 }
