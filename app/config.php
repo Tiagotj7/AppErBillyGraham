@@ -29,8 +29,7 @@ if (!$loadedFile) {
 if (!$DB_HOST || !$DB_NAME || !$DB_USER) {
   http_response_code(500);
   exit(
-    "Variáveis do banco vazias no .env. " .
-    "Encontrado em: {$loadedFile}. " .
+    "Variáveis do banco vazias no .env. Encontrado em: {$loadedFile}. " .
     "Confira DB_HOST/DB_NAME/DB_USER."
   );
 }
