@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 require_once __DIR__ . "/auth.php";
@@ -17,12 +16,11 @@ $activeTab = $activeTab ?? ""; // people | attendance | history
   <title><?= htmlspecialchars($title) ?></title>
   <link rel="stylesheet" href="/assets/style.css">
 
-  <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
-  <link rel="manifest" href="assets/img/site.webmanifest">
-
+  <link rel="shortcut icon" href="/assets/img/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+  <link rel="manifest" href="/assets/img/site.webmanifest">
 </head>
 
 <body>
@@ -43,6 +41,11 @@ $activeTab = $activeTab ?? ""; // people | attendance | history
             </small>
           </span>
 
+          <!-- ✅ Novo: Minha Conta (trocar senha) -->
+          <a href="/account.php" class="btn btn-logout" style="margin-right:10px;">
+            Minha conta
+          </a>
+
           <a href="/logout.php" class="btn btn-logout">Sair</a>
         </div>
       </div>
@@ -54,4 +57,5 @@ $activeTab = $activeTab ?? ""; // people | attendance | history
         <a class="tab <?= $activeTab === 'attendance' ? 'active' : '' ?>" href="/attendance.php">Registro de Frequência</a>
         <a class="tab <?= $activeTab === 'history' ? 'active' : '' ?>" href="/history.php">Histórico</a>
       </div>
-    <?php endif; ?>
+    </div>
+  <?php endif; ?>

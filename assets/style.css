@@ -537,6 +537,17 @@ tr {
   to { transform: rotate(360deg); }
 }
 
+/* opcional - Trocar Senha*/
+.btn-ghost {
+  background-color: rgba(255,255,255,.18);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+}
+.btn-ghost:hover {
+  background-color: rgba(255,255,255,.28);
+}
+
 /* =========================================================
    LOGO (login + header) responsiva e limpa
    Cole no final do style.css
