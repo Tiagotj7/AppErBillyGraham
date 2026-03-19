@@ -4,19 +4,12 @@ declare(strict_types=1);
 require_once __DIR__ . "/env.php";
 require_once __DIR__ . "/security.php";
 
-// Carregar .env (InfinityFree: normalmente em /public_html/.env)
-$envPaths = [
-  __DIR__ . "/../.env",          // /public_html/.env  (pois /app/config.php -> ../.env)
-  dirname(__DIR__) . "/.env",    // fallback redundante
-];
+// Caminho absoluto do diretório público (onde está o index.php)
+$publicRoot = realpath(__DIR__ . "/.."); // /public_html (se app está dentro dele)
+$envFile = $publicRoot ? ($publicRoot . "/.env") : null;
 
-$loaded = false;
-foreach ($envPaths as $p) {
-  if (is_readable($p)) {
-    env_load($p);
-    $loaded = true;
-    break;
-  }
+if ($envFile && is_file($envFile) && is_readable($envFile)) {
+  env_load($envFile);
 }
 
 security_headers();
@@ -27,10 +20,12 @@ $DB_NAME = env("DB_NAME");
 $DB_USER = env("DB_USER");
 $DB_PASS = env("DB_PASS");
 
-if (!$loaded || !$DB_HOST || !$DB_NAME || !$DB_USER) {
+if (!$DB_HOST || !$DB_NAME || !$DB_USER) {
   http_response_code(500);
-  // Mensagem mais útil para diagnosticar
-  exit("Configuração do banco não encontrada (.env). Verifique se existe /public_html/.env e se está legível.");
+  exit(
+    "Configuração do banco não encontrada (.env). " .
+    "Confirme que existe /public_html/.env e que DB_HOST/DB_NAME/DB_USER estão preenchidos."
+  );
 }
 
 try {

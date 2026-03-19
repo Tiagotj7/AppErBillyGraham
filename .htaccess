@@ -4,3 +4,10 @@ Options -Indexes
   Order allow,deny
   Deny from all
 </Files>
+
+Options -Indexes
+
+<Files "config.env">
+  Order allow,deny
+  Deny from all
+</Files>
