@@ -28,3 +28,14 @@ CREATE TABLE attendance (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 UPDATE users SET role='admin' WHERE email='SEU_EMAIL@EMAIL.COM';
+
+CREATE TABLE attendance_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  attendance_date DATE NOT NULL,
+  user_id INT NULL,
+  action ENUM('save','edit') NOT NULL DEFAULT 'save',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  note VARCHAR(255) NULL,
+  INDEX idx_attlog_date (attendance_date),
+  CONSTRAINT fk_attlog_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

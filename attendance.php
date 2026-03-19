@@ -1,4 +1,5 @@
 <?php
+// /attendance.php
 require_once __DIR__ . "/app/auth.php";
 require_login();
 
@@ -14,13 +15,13 @@ function valid_date_ymd(string $date): bool {
 }
 
 function br_date(string $ymd): string {
-  // recebe YYYY-MM-DD e devolve DD/MM/YYYY
   if (!valid_date_ymd($ymd)) return $ymd;
   return date('d/m/Y', strtotime($ymd));
 }
 
 /**
- * Data alvo SEMPRE em Y-m-d
+ * Data alvo SEMPRE em Y-m-d (input type="date")
+ * Prioridade: POST > GET > hoje
  */
 $date = date('Y-m-d');
 
@@ -36,16 +37,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 /* Carrega pessoas */
 $people = $pdo->query("SELECT * FROM people ORDER BY name")->fetchAll();
 
-/* SALVAR (POST) */
+/* =========================
+   SALVAR FREQUÊNCIA (POST)
+   ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $statuses = $_POST['status'] ?? [];
   if (!is_array($statuses)) $statuses = [];
 
   $pdo->beginTransaction();
   try {
+    // apaga registros do dia selecionado
     $stmtDel = $pdo->prepare("DELETE FROM attendance WHERE attendance_date=?");
     $stmtDel->execute([$date]);
 
+    // reinsere registros do dia selecionado
     $stmtIns = $pdo->prepare(
       "INSERT INTO attendance (attendance_date, person_id, status, recorded_by)
        VALUES (?,?,?,?)"
@@ -58,23 +63,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmtIns->execute([$date, $pid, $st, (int)$user['id']]);
     }
 
+    // ✅ LOG: registra quem salvou e quando (um registro por salvamento)
+    $stmtLog = $pdo->prepare(
+      "INSERT INTO attendance_logs (attendance_date, user_id, action)
+       VALUES (?,?, 'save')"
+    );
+    $stmtLog->execute([$date, (int)$user['id']]);
+
     $pdo->commit();
   } catch (Throwable $e) {
     $pdo->rollBack();
     http_response_code(500);
-    exit("Erro ao salvar frequência.");
+    exit("Erro ao salvar frequência. Tente novamente.");
   }
 
   header("Location: /attendance.php?date=" . urlencode($date) . "&saved=1");
   exit;
 }
 
-/* Carrega status do dia */
+/* =========================
+   CARREGA STATUS DO DIA (GET)
+   ========================= */
 $stmt = $pdo->prepare("SELECT person_id, status FROM attendance WHERE attendance_date=?");
 $stmt->execute([$date]);
 $map = [];
 foreach ($stmt->fetchAll() as $r) {
   $map[(int)$r['person_id']] = $r['status'];
+}
+
+/* =========================
+   ÚLTIMA ALTERAÇÃO (SÓ ADMIN)
+   ========================= */
+$lastLog = null;
+if (is_admin()) {
+  $stmt = $pdo->prepare("
+    SELECT al.created_at, u.name AS user_name, u.email
+    FROM attendance_logs al
+    LEFT JOIN users u ON u.id = al.user_id
+    WHERE al.attendance_date = ?
+    ORDER BY al.id DESC
+    LIMIT 1
+  ");
+  $stmt->execute([$date]);
+  $lastLog = $stmt->fetch() ?: null;
 }
 
 require_once __DIR__ . "/app/header.php";
@@ -89,11 +120,19 @@ require_once __DIR__ . "/app/header.php";
     </div>
   <?php endif; ?>
 
+  <?php if (is_admin() && $lastLog): ?>
+    <div style="margin: 10px 0; font-size: 14px; color:#444;">
+      <strong>Última alteração:</strong>
+      <?= htmlspecialchars(date('d/m/Y H:i', strtotime($lastLog['created_at']))) ?>
+      por <?= htmlspecialchars($lastLog['user_name'] ?? 'Usuário removido') ?>
+      <?= !empty($lastLog['email']) ? '(' . htmlspecialchars($lastLog['email']) . ')' : '' ?>
+    </div>
+  <?php endif; ?>
+
   <!-- GET: escolher data -->
   <form method="get" class="form-row">
     <div class="form-group">
       <label>Data</label>
-      <!-- value SEMPRE YYYY-MM-DD -->
       <input type="date" name="date" value="<?= htmlspecialchars($date) ?>">
     </div>
     <div class="form-group" style="align-self:end;">
@@ -104,7 +143,6 @@ require_once __DIR__ . "/app/header.php";
   <!-- POST: salvar -->
   <form method="post">
     <?= csrf_input() ?>
-    <!-- hidden também em YYYY-MM-DD -->
     <input type="hidden" name="date" value="<?= htmlspecialchars($date) ?>">
 
     <div class="attendance-list">
