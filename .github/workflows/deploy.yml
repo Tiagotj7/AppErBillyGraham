@@ -13,7 +13,7 @@ jobs:
       - name: 🧾 Checkout do código
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy para FTP (VigilantOficial)
+      - name: 🚀 Deploy para FTP (AppErBillyGraham)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
