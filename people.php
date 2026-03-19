@@ -4,6 +4,7 @@ require_login();
 
 $title = "Cadastro de Pessoas";
 $activeTab = "people";
+require_once __DIR__ . "/app/header.php";
 
 $can_edit = is_admin();
 $error = "";

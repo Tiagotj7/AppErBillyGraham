@@ -10,10 +10,11 @@ require_once __DIR__ . "/app/header.php";
 
 <div class="tab-content">
   <h3 class="form-title">Bem-vindo!</h3>
-  <p>Use as abas acima para cadastrar pessoas, registrar frequência e consultar histórico.</p>
+  <p>Use as abas para cadastrar pessoas, registrar frequência e consultar histórico.</p>
 
   <div style="margin-top:15px;">
-    <p><strong>Usuário:</strong> <?= htmlspecialchars($user['email'] ?? '') ?></p>
+    <p><strong>Usuário:</strong> <?= htmlspecialchars($user['name'] ?? '') ?></p>
+    <p><strong>Email:</strong> <?= htmlspecialchars($user['email'] ?? '') ?></p>
     <p><strong>Perfil:</strong> <?= htmlspecialchars(($user['role'] ?? '') === 'admin' ? 'Administrador' : 'Conselheiro') ?></p>
   </div>
 </div>

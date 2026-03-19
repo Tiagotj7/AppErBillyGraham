@@ -9,8 +9,6 @@ function security_headers(): void {
 
 function start_secure_session(): void {
   $name = env('SESSION_NAME', 'FREQSESS') ?? 'FREQSESS';
-
-  // InfinityFree geralmente é HTTPS; se for http, deixe false.
   $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 
   session_name($name);
@@ -22,6 +20,7 @@ function start_secure_session(): void {
     'httponly' => true,
     'samesite' => 'Lax',
   ]);
+
   if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
   }
@@ -35,8 +34,7 @@ function csrf_token(): string {
 }
 
 function csrf_input(): string {
-  $t = csrf_token();
-  return '<input type="hidden" name="csrf_token" value="'.htmlspecialchars($t).'">';
+  return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token()) . '">';
 }
 
 function csrf_verify(): void {
@@ -48,7 +46,6 @@ function csrf_verify(): void {
   }
 }
 
-// Proteção simples contra fixation (regen no login)
 function session_regenerate_on_login(): void {
   session_regenerate_id(true);
 }

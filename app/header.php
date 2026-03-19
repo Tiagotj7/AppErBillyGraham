@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/auth.php"; // já carrega config + sessão + security + env
+require_once __DIR__ . "/auth.php";
 $user = current_user();
 
 $title = $title ?? "Sistema de Frequência";
-$activeTab = $activeTab ?? "";
+$activeTab = $activeTab ?? ""; // people | attendance | history
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -20,11 +20,18 @@ $activeTab = $activeTab ?? "";
 <?php if ($user): ?>
 <header class="header">
   <div class="container header-content">
-    <div class="logo"><span>Sistema de Frequência</span></div>
+    <div class="logo">
+      <span>Sistema de Frequência</span>
+    </div>
+
     <div class="user-info">
       <span class="username">
-        <?= htmlspecialchars(($user['role'] ?? '') === 'admin' ? 'Administrador' : 'Conselheiro') ?>
+        <?= htmlspecialchars($user['name'] ?? 'Usuário') ?>
+        <small style="opacity:.9;font-weight:600;">
+          (<?= htmlspecialchars(($user['role'] ?? '') === 'admin' ? 'Admin' : 'Conselheiro') ?>)
+        </small>
       </span>
+
       <a href="/logout.php" class="btn btn-logout">Sair</a>
     </div>
   </div>

@@ -1,11 +1,6 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Loader de .env compatível com hosts que bloqueiam putenv/getenv (InfinityFree).
- * Carrega as variáveis em $_ENV e em um store interno.
- */
-
 $GLOBALS['__ENV_STORE'] = $GLOBALS['__ENV_STORE'] ?? [];
 
 function env_load(string $path): void {
@@ -14,8 +9,7 @@ function env_load(string $path): void {
   $raw = file_get_contents($path);
   if ($raw === false) return;
 
-  // Remove BOM UTF-8
-  $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw);
+  $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw); // remove BOM
 
   $lines = preg_split("/\r\n|\n|\r/", $raw);
   if (!$lines) return;
@@ -33,10 +27,8 @@ function env_load(string $path): void {
 
     $key = trim(substr($line, 0, $pos));
     $val = trim(substr($line, $pos + 1));
-
     if ($key === '') continue;
 
-    // remove aspas
     if ((str_starts_with($val, '"') && str_ends_with($val, '"')) ||
         (str_starts_with($val, "'") && str_ends_with($val, "'"))) {
       $val = substr($val, 1, -1);

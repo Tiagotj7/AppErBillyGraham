@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . "/env.php";
 require_once __DIR__ . "/security.php";
 
-$root = realpath(__DIR__ . "/.."); // .../htdocs
+$root = realpath(__DIR__ . "/.."); // diretório raiz do site (onde está index.php e .env)
 $envFile = $root ? ($root . "/.env") : null;
 
 $loadedFile = null;
@@ -25,13 +25,9 @@ if (!$loadedFile) {
   http_response_code(500);
   exit("Não foi possível localizar o .env em: " . ($envFile ?? '(null)'));
 }
-
 if (!$DB_HOST || !$DB_NAME || !$DB_USER) {
   http_response_code(500);
-  exit(
-    "Variáveis do banco vazias no .env. Encontrado em: {$loadedFile}. " .
-    "Confira DB_HOST/DB_NAME/DB_USER."
-  );
+  exit("Variáveis do banco vazias no .env. Confira DB_HOST/DB_NAME/DB_USER.");
 }
 
 try {

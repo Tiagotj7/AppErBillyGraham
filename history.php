@@ -4,6 +4,7 @@ require_login();
 
 $title = "Histórico";
 $activeTab = "history";
+require_once __DIR__ . "/app/header.php";
 
 $people = $pdo->query("SELECT id,name FROM people ORDER BY name")->fetchAll();
 $person_id = (int)($_GET['person_id'] ?? 0);

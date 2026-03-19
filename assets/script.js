@@ -6,7 +6,7 @@
     else document.addEventListener("DOMContentLoaded", fn);
   }
 
-  function wireDeleteConfirm() {
+  function wireConfirm() {
     document.querySelectorAll('[data-confirm]').forEach(el => {
       el.addEventListener("click", (e) => {
         const msg = el.getAttribute("data-confirm") || "Confirmar ação?";
@@ -25,7 +25,7 @@
   }
 
   ready(() => {
-    wireDeleteConfirm();
+    wireConfirm();
     autoSubmitSelect();
   });
 })();

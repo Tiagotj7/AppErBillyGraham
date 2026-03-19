@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/app/config.php"; // carrega env + sessão + pdo + csrf funcs
+require_once __DIR__ . "/app/config.php";
 
 if (!empty($_SESSION['user'])) {
   header("Location: /dashboard.php");
@@ -14,20 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $email = trim($_POST['email'] ?? '');
   $password = (string)($_POST['password'] ?? '');
 
-  $stmt = $pdo->prepare("SELECT id,name,email,role,password_hash FROM users WHERE email = ?");
-  $stmt->execute([$email]);
-  $user = $stmt->fetch();
-
-  if ($user && password_verify($password, $user['password_hash'])) {
-    session_regenerate_on_login();
-
-    unset($user['password_hash']);
-    $_SESSION['user'] = $user;
-
-    header("Location: /dashboard.php");
-    exit;
+  if ($email === '' || $password === '') {
+    $error = "Informe email e senha.";
   } else {
-    $error = "Email ou senha incorretos.";
+    $stmt = $pdo->prepare("SELECT id, name, email, role, password_hash FROM users WHERE email=?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($password, $user['password_hash'])) {
+      session_regenerate_on_login();
+      unset($user['password_hash']);
+      $_SESSION['user'] = $user;
+
+      header("Location: /dashboard.php");
+      exit;
+    } else {
+      $error = "Email ou senha incorretos.";
+    }
   }
 }
 ?>
@@ -48,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="error-message"><?= htmlspecialchars($error) ?></div>
       <?php endif; ?>
 
-      <form method="post">
+      <form method="post" autocomplete="off">
         <?= csrf_input() ?>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" required>
+          <input type="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
         </div>
         <div class="form-group">
           <label>Senha</label>
@@ -60,6 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <button class="btn btn-primary btn-block">Entrar</button>
       </form>
+
+      <div style="margin-top:15px;text-align:center;">
+        <a href="/register.php">Criar conta</a>
+      </div>
     </div>
   </div>
 </body>

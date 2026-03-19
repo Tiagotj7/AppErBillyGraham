@@ -4,6 +4,7 @@ require_login();
 
 $title = "Registro de Frequência";
 $activeTab = "attendance";
+require_once __DIR__ . "/app/header.php";
 
 $user = current_user();
 $date = $_GET['date'] ?? date('Y-m-d');
