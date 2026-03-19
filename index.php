@@ -68,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form method="post" autocomplete="off">
         <?= csrf_input() ?>
         <div class="form-group">
-          <label>Email</label>
+          <label aria-placeholder="Digite seu email">Email</label>
           <input type="email" name="email" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
         </div>
         <div class="form-group">
-          <label>Senha</label>
+          <label aria-placeholder="Digite sua senha">Senha</label>
           <input type="password" name="password" required>
         </div>
         <button class="btn btn-primary btn-block">Entrar</button>
