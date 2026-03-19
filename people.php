@@ -5,39 +5,49 @@ require_login();
 $title = "Cadastro de Pessoas";
 $activeTab = "people";
 
-$user = current_user();
 $can_edit = is_admin();
 $error = "";
 
-// CREATE/UPDATE
+// CREATE/UPDATE (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $can_edit) {
-  $id = (int)($_POST['id'] ?? 0);
-  $name = trim($_POST['name'] ?? '');
-  $birthdate = $_POST['birthdate'] ?? '';
-  $role = $_POST['role'] ?? '';
+  csrf_verify();
 
-  if ($name !== '' && $birthdate !== '' && $role !== '') {
-    if ($id > 0) {
-      $stmt = $pdo->prepare("UPDATE people SET name=?, birthdate=?, role=? WHERE id=?");
-      $stmt->execute([$name, $birthdate, $role, $id]);
+  $action = $_POST['action'] ?? '';
+  if ($action === 'save') {
+    $id = (int)($_POST['id'] ?? 0);
+    $name = trim($_POST['name'] ?? '');
+    $birthdate = $_POST['birthdate'] ?? '';
+    $role = $_POST['role'] ?? '';
+
+    $validRoles = ['escudeiro','arauto','sênior','emérito','conselheiro'];
+
+    if ($name === '' || $birthdate === '' || $role === '') {
+      $error = "Preencha todos os campos.";
+    } elseif (!in_array($role, $validRoles, true)) {
+      $error = "Posto inválido.";
     } else {
-      $stmt = $pdo->prepare("INSERT INTO people (name,birthdate,role) VALUES (?,?,?)");
-      $stmt->execute([$name, $birthdate, $role]);
+      if ($id > 0) {
+        $stmt = $pdo->prepare("UPDATE people SET name=?, birthdate=?, role=? WHERE id=?");
+        $stmt->execute([$name, $birthdate, $role, $id]);
+      } else {
+        $stmt = $pdo->prepare("INSERT INTO people (name,birthdate,role) VALUES (?,?,?)");
+        $stmt->execute([$name, $birthdate, $role]);
+      }
+      header("Location: /people.php");
+      exit;
+    }
+  }
+
+  // DELETE (POST)
+  if ($action === 'delete') {
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) {
+      $stmt = $pdo->prepare("DELETE FROM people WHERE id=?");
+      $stmt->execute([$id]);
     }
     header("Location: /people.php");
     exit;
-  } else {
-    $error = "Preencha todos os campos.";
   }
-}
-
-// DELETE
-if (isset($_GET['delete']) && $can_edit) {
-  $id = (int)$_GET['delete'];
-  $stmt = $pdo->prepare("DELETE FROM people WHERE id=?");
-  $stmt->execute([$id]);
-  header("Location: /people.php");
-  exit;
 }
 
 // LIST + SEARCH
@@ -73,6 +83,8 @@ require_once __DIR__ . "/app/header.php";
 
   <?php if ($can_edit): ?>
     <form method="post" class="mb-20">
+      <?= csrf_input() ?>
+      <input type="hidden" name="action" value="save">
       <input type="hidden" name="id" value="<?= (int)($editPerson['id'] ?? 0) ?>">
 
       <div class="form-row">
@@ -141,11 +153,16 @@ require_once __DIR__ . "/app/header.php";
               <td>
                 <?php if ($can_edit): ?>
                   <a class="btn action-btn edit-btn" href="/people.php?edit=<?= (int)$p['id'] ?>">Editar</a>
-                  <a class="btn action-btn delete-btn"
-                     href="/people.php?delete=<?= (int)$p['id'] ?>"
-                     data-confirm="Tem certeza que deseja excluir esta pessoa?">
-                     Excluir
-                  </a>
+
+                  <form method="post" action="/people.php" style="display:inline;">
+                    <?= csrf_input() ?>
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
+                    <button type="submit" class="btn action-btn delete-btn"
+                            data-confirm="Tem certeza que deseja excluir esta pessoa?">
+                      Excluir
+                    </button>
+                  </form>
                 <?php endif; ?>
 
                 <a class="btn action-btn attendance-btn" href="/history.php?person_id=<?= (int)$p['id'] ?>">Frequência</a>

@@ -1,15 +1,11 @@
 <?php
-// header.php
-// Requer: app/auth.php (para current_user())
-if (!function_exists('current_user')) {
-  require_once __DIR__ . "/auth.php";
-}
+declare(strict_types=1);
 
+require_once __DIR__ . "/auth.php"; // já carrega config + sessão + security + env
 $user = current_user();
-$title = $title ?? "Sistema de Frequência";
 
-// opcional: definir qual aba está ativa manualmente
-// $activeTab = $activeTab ?? ''; // 'people' | 'attendance' | 'history'
+$title = $title ?? "Sistema de Frequência";
+$activeTab = $activeTab ?? "";
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -24,13 +20,7 @@ $title = $title ?? "Sistema de Frequência";
 <?php if ($user): ?>
 <header class="header">
   <div class="container header-content">
-    <div class="logo">
-      <!-- Se quiser logo:
-      <img src="/src/er_logo.svg" alt="Logo" class="nav-logo">
-      -->
-      <span>Sistema de Frequência</span>
-    </div>
-
+    <div class="logo"><span>Sistema de Frequência</span></div>
     <div class="user-info">
       <span class="username">
         <?= htmlspecialchars(($user['role'] ?? '') === 'admin' ? 'Administrador' : 'Conselheiro') ?>
@@ -42,8 +32,8 @@ $title = $title ?? "Sistema de Frequência";
 
 <div class="container main-content">
   <div class="tabs">
-    <a class="tab <?= (($activeTab ?? '') === 'people') ? 'active' : '' ?>" href="/people.php">Cadastro de Pessoas</a>
-    <a class="tab <?= (($activeTab ?? '') === 'attendance') ? 'active' : '' ?>" href="/attendance.php">Registro de Frequência</a>
-    <a class="tab <?= (($activeTab ?? '') === 'history') ? 'active' : '' ?>" href="/history.php">Histórico</a>
+    <a class="tab <?= $activeTab === 'people' ? 'active' : '' ?>" href="/people.php">Cadastro de Pessoas</a>
+    <a class="tab <?= $activeTab === 'attendance' ? 'active' : '' ?>" href="/attendance.php">Registro de Frequência</a>
+    <a class="tab <?= $activeTab === 'history' ? 'active' : '' ?>" href="/history.php">Histórico</a>
   </div>
 <?php endif; ?>

@@ -6,29 +6,19 @@ $title = "Registro de Frequência";
 $activeTab = "attendance";
 
 $user = current_user();
-
-// data selecionada
 $date = $_GET['date'] ?? date('Y-m-d');
 
-// lista pessoas
 $people = $pdo->query("SELECT * FROM people ORDER BY name")->fetchAll();
 
-// carregar status da data
-$stmt = $pdo->prepare("SELECT person_id,status FROM attendance WHERE attendance_date=?");
-$stmt->execute([$date]);
-$map = [];
-foreach ($stmt->fetchAll() as $r) {
-  $map[(int)$r['person_id']] = $r['status'];
-}
-
-// salvar
+// salvar (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  csrf_verify();
+
   $date = $_POST['date'] ?? $date;
-  $statuses = $_POST['status'] ?? []; // [person_id => present/absent]
+  $statuses = $_POST['status'] ?? [];
 
   $pdo->beginTransaction();
 
-  // remove registros do dia e regrava tudo
   $stmtDel = $pdo->prepare("DELETE FROM attendance WHERE attendance_date=?");
   $stmtDel->execute([$date]);
 
@@ -50,6 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
 }
 
+// carregar status da data (GET)
+$stmt = $pdo->prepare("SELECT person_id,status FROM attendance WHERE attendance_date=?");
+$stmt->execute([$date]);
+$map = [];
+foreach ($stmt->fetchAll() as $r) {
+  $map[(int)$r['person_id']] = $r['status'];
+}
+
 require_once __DIR__ . "/app/header.php";
 ?>
 
@@ -67,6 +65,7 @@ require_once __DIR__ . "/app/header.php";
   </form>
 
   <form method="post">
+    <?= csrf_input() ?>
     <input type="hidden" name="date" value="<?= htmlspecialchars($date) ?>">
 
     <div class="attendance-list">
@@ -85,7 +84,6 @@ require_once __DIR__ . "/app/header.php";
                 <input type="radio" name="status[<?= $pid ?>]" value="present" <?= $st === 'present' ? 'checked' : '' ?>>
                 Presente
               </label>
-
               <label style="margin-left: 15px;">
                 <input type="radio" name="status[<?= $pid ?>]" value="absent" <?= $st === 'absent' ? 'checked' : '' ?>>
                 Ausente

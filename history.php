@@ -5,8 +5,6 @@ require_login();
 $title = "Histórico";
 $activeTab = "history";
 
-$user = current_user();
-
 $people = $pdo->query("SELECT id,name FROM people ORDER BY name")->fetchAll();
 $person_id = (int)($_GET['person_id'] ?? 0);
 

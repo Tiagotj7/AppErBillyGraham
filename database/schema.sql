@@ -26,3 +26,11 @@ CREATE TABLE attendance (
   CONSTRAINT fk_att_person FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE CASCADE,
   CONSTRAINT fk_att_user FOREIGN KEY (recorded_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE people
+  ADD COLUMN created_by INT NULL,
+  ADD COLUMN updated_by INT NULL;
+
+ALTER TABLE people
+  ADD CONSTRAINT fk_people_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+  ADD CONSTRAINT fk_people_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;

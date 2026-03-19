@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/app/config.php";
+require_once __DIR__ . "/app/config.php"; // carrega env + sessão + pdo + csrf funcs
 
 if (!empty($_SESSION['user'])) {
   header("Location: /dashboard.php");
@@ -9,16 +9,21 @@ if (!empty($_SESSION['user'])) {
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  csrf_verify();
+
   $email = trim($_POST['email'] ?? '');
-  $password = $_POST['password'] ?? '';
+  $password = (string)($_POST['password'] ?? '');
 
   $stmt = $pdo->prepare("SELECT id,name,email,role,password_hash FROM users WHERE email = ?");
   $stmt->execute([$email]);
   $user = $stmt->fetch();
 
   if ($user && password_verify($password, $user['password_hash'])) {
+    session_regenerate_on_login();
+
     unset($user['password_hash']);
     $_SESSION['user'] = $user;
+
     header("Location: /dashboard.php");
     exit;
   } else {
@@ -31,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de Controle de Frequência</title>
+  <title>Login - Sistema de Frequência</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
@@ -44,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
 
       <form method="post">
+        <?= csrf_input() ?>
         <div class="form-group">
           <label>Email</label>
           <input type="email" name="email" required>
