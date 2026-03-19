@@ -4,15 +4,17 @@ declare(strict_types=1);
 require_once __DIR__ . "/env.php";
 require_once __DIR__ . "/security.php";
 
-// 1) Carrega .env (tente fora do public_html primeiro)
+// Carregar .env (InfinityFree: normalmente em /public_html/.env)
 $envPaths = [
-  dirname(__DIR__, 2) . "/.env", // se /app estiver em /public_html/app, isso sobe 2 níveis
-  __DIR__ . "/../.env",          // fallback: /public_html/.env
+  __DIR__ . "/../.env",          // /public_html/.env  (pois /app/config.php -> ../.env)
+  dirname(__DIR__) . "/.env",    // fallback redundante
 ];
 
+$loaded = false;
 foreach ($envPaths as $p) {
   if (is_readable($p)) {
     env_load($p);
+    $loaded = true;
     break;
   }
 }
@@ -25,9 +27,10 @@ $DB_NAME = env("DB_NAME");
 $DB_USER = env("DB_USER");
 $DB_PASS = env("DB_PASS");
 
-if (!$DB_HOST || !$DB_NAME || !$DB_USER) {
+if (!$loaded || !$DB_HOST || !$DB_NAME || !$DB_USER) {
   http_response_code(500);
-  exit("Configuração do banco não encontrada (.env).");
+  // Mensagem mais útil para diagnosticar
+  exit("Configuração do banco não encontrada (.env). Verifique se existe /public_html/.env e se está legível.");
 }
 
 try {
@@ -43,5 +46,5 @@ try {
   );
 } catch (Throwable $e) {
   http_response_code(500);
-  exit("Erro ao conectar no banco.");
+  exit("Erro ao conectar no banco. Confira DB_HOST/DB_NAME/DB_USER/DB_PASS no .env");
 }
