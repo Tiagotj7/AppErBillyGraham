@@ -33,9 +33,23 @@ CREATE TABLE attendance_logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   attendance_date DATE NOT NULL,
   user_id INT NULL,
-  action ENUM('save','edit') NOT NULL DEFAULT 'save',
+  action ENUM('save') NOT NULL DEFAULT 'save',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  note VARCHAR(255) NULL,
   INDEX idx_attlog_date (attendance_date),
   CONSTRAINT fk_attlog_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE attendance_log_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  log_id INT NOT NULL,
+  person_id INT NOT NULL,
+  old_status ENUM('present','absent') NULL,
+  new_status ENUM('present','absent') NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  INDEX idx_logitem_log (log_id),
+  INDEX idx_logitem_person (person_id),
+
+  CONSTRAINT fk_logitem_log FOREIGN KEY (log_id) REFERENCES attendance_logs(id) ON DELETE CASCADE,
+  CONSTRAINT fk_logitem_person FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
