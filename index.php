@@ -64,9 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button class="btn btn-primary btn-block">Entrar</button>
       </form>
 
+ <!--Acesso pelo administrador, não é necessário criar conta!!!
       <div style="margin-top:15px;text-align:center;">
         <a href="/register.php">Criar conta</a>
       </div>
+-->
+
     </div>
   </div>
 </body>
