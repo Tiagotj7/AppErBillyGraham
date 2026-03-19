@@ -21,7 +21,9 @@ body {
   min-height: 100vh;
 }
 
-a { text-decoration: none; }
+a {
+  text-decoration: none;
+}
 
 .container {
   max-width: 1200px;
@@ -265,7 +267,8 @@ table {
   background-color: white;
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -352,7 +355,9 @@ tr:hover {
 }
 
 /* Small utility */
-.mb-20 { margin-bottom: 20px; }
+.mb-20 {
+  margin-bottom: 20px;
+}
 
 /* Responsiveness */
 @media (max-width: 768px) {
@@ -398,7 +403,8 @@ tr:hover {
     padding: 20px;
   }
 
-  th, td {
+  th,
+  td {
     padding: 10px 10px;
   }
 
@@ -408,20 +414,110 @@ tr:hover {
 }
 
 /* =========================================================
+   LOGO (login + header) responsiva e limpa
+   Cole no final do style.css
+   ========================================================= */
+
+/* Login logo central */
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.login-logo-img {
+  height: 92px;
+  /* tamanho padrão */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Logo no header */
+.header-logo {
+  height: 54px;
+  /* desktop */
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/* Ajusta alinhamento do bloco do logo do header */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Em telas pequenas reduz logo e evita quebrar layout */
+@media (max-width: 520px) {
+  .login-logo-img {
+    height: 78px;
+  }
+
+  .header-logo {
+    height: 44px;
+  }
+
+  /* Se o header estiver muito apertado, permite quebrar com elegância */
+  .logo {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .logo span {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+}
+
+/* Em telas bem pequenas (opcional) */
+@media (max-width: 360px) {
+  .login-logo-img {
+    height: 68px;
+  }
+
+  .header-logo {
+    height: 40px;
+  }
+}
+
+/* =========================================================
    RESPONSIVIDADE (limpa e consistente)
    Alvo: telas a partir de 400x600 e também menores
    ========================================================= */
 
-html, body { overflow-x: hidden; }
-input, select, button, textarea { max-width: 100%; }
+html,
+body {
+  overflow-x: hidden;
+}
+
+input,
+select,
+button,
+textarea {
+  max-width: 100%;
+}
 
 /* MOBILE FIRST (até 520px) */
 @media (max-width: 520px) {
-  .container { padding: 14px; }
-  .main-content { margin-top: 16px; }
+  .container {
+    padding: 14px;
+  }
 
-  .tab-content { padding: 16px; }
-  .form-title { font-size: 1.05rem; line-height: 1.2; }
+  .main-content {
+    margin-top: 16px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .form-title {
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
 
   /* Header */
   .header-content {
@@ -430,8 +526,15 @@ input, select, button, textarea { max-width: 100%; }
     gap: 10px;
     text-align: center;
   }
-  .user-info { flex-direction: column; gap: 8px; }
-  .username { margin-right: 0; }
+
+  .user-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .username {
+    margin-right: 0;
+  }
 
   /* Tabs como "cards" */
   .tabs {
@@ -440,6 +543,7 @@ input, select, button, textarea { max-width: 100%; }
     border-bottom: none;
     margin-bottom: 16px;
   }
+
   .tab {
     display: block;
     width: 100%;
@@ -450,13 +554,17 @@ input, select, button, textarea { max-width: 100%; }
     font-weight: 800;
     line-height: 1.2;
   }
+
   .tab.active {
     border: 2px solid var(--accent);
     color: var(--primary);
   }
 
   /* Form em coluna */
-  .form-row { flex-direction: column; gap: 12px; }
+  .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
 
   /* Inputs: 16px evita zoom no iOS */
   .form-group input[type="text"],
@@ -470,18 +578,48 @@ input, select, button, textarea { max-width: 100%; }
   }
 
   /* Search: empilha */
-  .search-bar { flex-direction: column; gap: 10px; }
-  .search-bar input[type="text"], .search-bar button { width: 100%; }
+  .search-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-bar input[type="text"],
+  .search-bar button {
+    width: 100%;
+  }
 
   /* Tabelas: scroll horizontal e legível */
-  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 520px; }
-  th, td { white-space: nowrap; padding: 10px 10px; }
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 520px;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+    padding: 10px 10px;
+  }
 
   /* Botões de ação: empilha e ocupa largura toda */
-  td { vertical-align: top; }
-  td .action-btn, td a.action-btn, td form { display: block; width: 100%; }
-  .action-btn { margin: 0 0 8px 0; text-align: center; }
+  td {
+    vertical-align: top;
+  }
+
+  td .action-btn,
+  td a.action-btn,
+  td form {
+    display: block;
+    width: 100%;
+  }
+
+  .action-btn {
+    margin: 0 0 8px 0;
+    text-align: center;
+  }
 
   /* Attendance */
   .attendance-item {
@@ -489,11 +627,13 @@ input, select, button, textarea { max-width: 100%; }
     align-items: flex-start;
     gap: 10px;
   }
+
   .attendance-status {
     width: 100%;
     display: flex;
     gap: 10px;
   }
+
   .attendance-status label {
     flex: 1;
     display: inline-flex;
@@ -511,6 +651,7 @@ input, select, button, textarea { max-width: 100%; }
     height: auto;
     min-height: 100vh;
   }
+
   .login-form {
     width: 100%;
     max-width: 100%;
@@ -518,18 +659,37 @@ input, select, button, textarea { max-width: 100%; }
   }
 
   /* Botões um pouco menores no mobile */
-  .btn { padding: 10px 14px; }
+  .btn {
+    padding: 10px 14px;
+  }
 }
 
 /* 400x600+ (seu pedido): só melhora espaçamento/legibilidade */
 @media (min-width: 400px) and (min-height: 600px) and (max-width: 520px) {
-  .container { padding: 16px; }
-  .tab { padding: 14px 14px; font-size: 0.98rem; }
-  .tab-content { padding: 18px; }
+  .container {
+    padding: 16px;
+  }
+
+  .tab {
+    padding: 14px 14px;
+    font-size: 0.98rem;
+  }
+
+  .tab-content {
+    padding: 18px;
+  }
 }
 
 /* TABLET / SMALL DESKTOP (>=600px): volta layout em 2 colunas nos forms */
 @media (min-width: 600px) {
-  .form-row { flex-direction: row; gap: 20px; }
-  table { min-width: 0; } /* remove scroll forçado */
+  .form-row {
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  table {
+    min-width: 0;
+  }
+
+  /* remove scroll forçado */
 }

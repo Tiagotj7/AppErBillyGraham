@@ -36,15 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - Sistema de Frequência</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
+
 <body>
   <div class="login-container">
     <div class="login-form">
+
+      <div class="login-logo">
+        <img src="/assets/img/logo.svg" alt="Logo" class="login-logo-img">
+      </div>
+
       <h2>Sistema de Controle de Frequência</h2>
 
       <?php if ($error): ?>
@@ -64,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button class="btn btn-primary btn-block">Entrar</button>
       </form>
 
- <!--Acesso pelo administrador, não é necessário criar conta!!!
+      <!--Acesso pelo administrador, não é necessário criar conta!!!
       <div style="margin-top:15px;text-align:center;">
         <a href="/register.php">Criar conta</a>
       </div>
@@ -73,4 +80,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </body>
+
 </html>
