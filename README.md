@@ -3,7 +3,7 @@
 Aplicação web para **cadastro de pessoas** e **registro de frequência por data**, com **login**, **perfis de acesso** e **auditoria de alterações** (somente admin). Projetado para rodar em hospedagem compartilhada (ex.: **InfinityFree**) e também pode ser disponibilizado como **app Android** via WebView (PWA/Wrapper).
 
 ---
-
+ 
 ## Principais recursos
 
 - **Login e cadastro de usuários** (nome, email e senha)
