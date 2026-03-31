@@ -53,3 +53,6 @@ CREATE TABLE attendance_log_items (
   CONSTRAINT fk_logitem_log FOREIGN KEY (log_id) REFERENCES attendance_logs(id) ON DELETE CASCADE,
   CONSTRAINT fk_logitem_person FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE INDEX idx_people_birthdate ON people(birthdate);
+CREATE INDEX idx_att_person_status ON attendance(person_id, status);

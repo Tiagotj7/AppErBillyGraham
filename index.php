@@ -80,6 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button class="btn btn-primary btn-block">Entrar</button>
       </form>
 
+      <div style="margin-top:8px;text-align:center;">
+        <a href="/aluno.php">Área do Aluno (Faltas)</a>
+      </div>
+
       <!--Acesso pelo administrador, não é necessário criar conta!!!
       <div style="margin-top:15px;text-align:center;">
         <a href="/register.php">Criar conta</a>
