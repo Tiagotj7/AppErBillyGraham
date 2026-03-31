@@ -135,9 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
       <?php endif; ?>
 
-      <div style="margin-top:18px;text-align:center;">
-        <a href="/index.php">Voltar para Login</a>
-      </div>
     </div>
   </div>
 </body>
